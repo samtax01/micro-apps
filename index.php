@@ -1,7 +1,7 @@
 <?php
 session_start();
 $dir = __DIR__;
-$files = array_diff(scandir($dir), array('.', '..', 'index.php', '.DS_Store'));
+$files = array_diff(scandir($dir), array('.', '..', 'index.php', '.DS_Store', '.git', 'README.md'));
 $viewMode = $_SESSION['viewMode'] ?? 'grid';
 
 if (isset($_POST['viewMode'])) {
@@ -38,11 +38,16 @@ if (isset($_POST['viewMode'])) {
 </head>
 <body class="bg-gray-100 p-5">
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-        <div class="flex justify-between mb-4">
+        <div class="flex justify-between items-center mb-4">
             <h1 class="text-xl font-bold">PHP File Explorer</h1>
-            <div>
-                <button onclick="setViewMode('list')" class="px-3 py-1 border rounded <?= $viewMode === 'list' ? 'bg-gray-300' : '' ?>">List</button>
-                <button onclick="setViewMode('grid')" class="px-3 py-1 border rounded <?= $viewMode === 'grid' ? 'bg-gray-300' : '' ?>">Grid</button>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Search files..." class="px-3 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                </div>
+                <div>
+                    <button onclick="setViewMode('list')" class="px-3 py-1 border rounded <?= $viewMode === 'list' ? 'bg-gray-300' : '' ?>">List</button>
+                    <button onclick="setViewMode('grid')" class="px-3 py-1 border rounded <?= $viewMode === 'grid' ? 'bg-gray-300' : '' ?>">Grid</button>
+                </div>
             </div>
         </div>
         
@@ -50,7 +55,7 @@ if (isset($_POST['viewMode'])) {
         <div id="favorites" class="grid grid-cols-3 gap-4 mb-6"></div>
         
         <h2 class="text-lg font-semibold mb-3">All Files</h2>
-        <div class="<?= $viewMode === 'grid' ? 'grid grid-cols-3 gap-4' : 'flex flex-col space-y-2' ?>">
+        <div id="allFiles" class="<?= $viewMode === 'grid' ? 'grid grid-cols-3 gap-4' : 'flex flex-col space-y-2' ?>">
             <?php foreach ($files as $file): ?>
                 <div class="p-3 border rounded-lg bg-gray-50 hover:bg-gray-200 flex justify-between items-center space-x-4">
                     <a href="<?= $file ?>" target="_blank" class="text-blue-500 underline"> <?= $file ?> </a>
@@ -62,16 +67,53 @@ if (isset($_POST['viewMode'])) {
     <script>
         let favs = JSON.parse(localStorage.getItem('favorites') || '[]');
         let favContainer = document.getElementById('favorites');
-        if (favs.length) {
-            favs.forEach(file => {
-                let div = document.createElement('div');
-                div.classList.add('p-3', 'border', 'rounded-lg', 'bg-yellow-50', 'hover:bg-yellow-200', 'text-center');
-                div.innerHTML = `<a href="${file}" target="_blank" class="text-blue-500 underline">${file}</a>`;
-                favContainer.appendChild(div);
-            });
-        } else {
-            favContainer.innerHTML = '<p class="text-gray-500">No favorites yet.</p>';
+        
+        // Function to render favorites
+        function renderFavorites(filterText = '') {
+            favContainer.innerHTML = '';
+            const filteredFavs = filterText ? 
+                favs.filter(file => file.toLowerCase().includes(filterText.toLowerCase())) : 
+                favs;
+                
+            if (filteredFavs.length) {
+                filteredFavs.forEach(file => {
+                    let div = document.createElement('div');
+                    div.classList.add('p-3', 'border', 'rounded-lg', 'bg-yellow-50', 'hover:bg-yellow-200', 'text-center');
+                    div.innerHTML = `<a href="${file}" target="_blank" class="text-blue-500 underline">${file}</a>`;
+                    favContainer.appendChild(div);
+                });
+            } else {
+                if (filterText) {
+                    favContainer.innerHTML = '<p class="text-gray-500">No matching favorites found.</p>';
+                } else {
+                    favContainer.innerHTML = '<p class="text-gray-500">No favorites yet.</p>';
+                }
+            }
         }
+        
+        // Function to filter all files
+        function filterAllFiles(filterText = '') {
+            const allFileItems = document.querySelectorAll('#allFiles > div');
+            allFileItems.forEach(item => {
+                const fileName = item.querySelector('a').textContent.trim();
+                if (filterText === '' || fileName.toLowerCase().includes(filterText.toLowerCase())) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        // Initialize search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function() {
+            const searchText = this.value.trim();
+            renderFavorites(searchText);
+            filterAllFiles(searchText);
+        });
+        
+        // Initial render
+        renderFavorites();
     </script>
 </body>
 </html>
