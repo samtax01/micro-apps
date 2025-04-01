@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Manipulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .url-component {
+            transition: all 0.3s ease;
+        }
+        .url-component:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto p-4">
+        <header class="text-center mb-8 fade-in">
+            <h1 class="text-3xl font-bold text-indigo-700 mb-2">URL Manipulator</h1>
+            <p class="text-gray-600">Analyze, compare, and edit URLs with ease</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Column 1: URL Input 1 -->
+            <div class="bg-white rounded-lg shadow-md p-6 fade-in" style="animation-delay: 0.1s">
+                <h2 class="text-xl font-semibold text-indigo-600 mb-4 flex items-center">
+                    <i class="fas fa-link mr-2"></i> URL Input 1
+                </h2>
+                <div class="mb-4">
+                    <textarea id="url1" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" 
+                        rows="4" placeholder="Enter URL here..."></textarea>
+                    <button id="analyze1" class="mt-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition flex items-center">
+                        <i class="fas fa-search mr-2"></i> Analyze URL
+                    </button>
+                </div>
+                <div id="url1Analysis" class="mt-4">
+                    <div id="url1Params" class="hidden">
+                        <h3 class="font-medium text-gray-700 mb-2">Query Parameters</h3>
+                        <div id="url1ParamsList" class="space-y-2"></div>
+                    </div>
+                    <div id="url1Domain" class="hidden mb-4 p-3 bg-gray-100 rounded-md url-component">
+                        <h3 class="font-medium text-gray-700 mb-1">Domain</h3>
+                        <div id="url1DomainValue" class="text-indigo-600 font-medium"></div>
+                    </div>
+                    <div id="url1Path" class="hidden mb-4 p-3 bg-gray-100 rounded-md url-component">
+                        <h3 class="font-medium text-gray-700 mb-1">Path</h3>
+                        <div id="url1PathValue" class="text-indigo-600 font-medium"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: URL Input 2 -->
+            <div class="bg-white rounded-lg shadow-md p-6 fade-in" style="animation-delay: 0.2s">
+                <h2 class="text-xl font-semibold text-indigo-600 mb-4 flex items-center">
+                    <i class="fas fa-link mr-2"></i> URL Input 2
+                </h2>
+                <div class="mb-4">
+                    <textarea id="url2" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" 
+                        rows="4" placeholder="Enter URL here..."></textarea>
+                    <button id="analyze2" class="mt-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition flex items-center">
+                        <i class="fas fa-search mr-2"></i> Analyze URL
+                    </button>
+                </div>
+                <div id="url2Analysis" class="mt-4">
+                    <div id="url2Params" class="hidden">
+                        <h3 class="font-medium text-gray-700 mb-2">Query Parameters</h3>
+                        <div id="url2ParamsList" class="space-y-2"></div>
+                    </div>
+                    <div id="url2Domain" class="hidden mb-4 p-3 bg-gray-100 rounded-md url-component">
+                        <h3 class="font-medium text-gray-700 mb-1">Domain</h3>
+                        <div id="url2DomainValue" class="text-indigo-600 font-medium"></div>
+                    </div>
+                    <div id="url2Path" class="hidden mb-4 p-3 bg-gray-100 rounded-md url-component">
+                        <h3 class="font-medium text-gray-700 mb-1">Path</h3>
+                        <div id="url2PathValue" class="text-indigo-600 font-medium"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: Compare URLs -->
+            <div class="bg-white rounded-lg shadow-md p-6 fade-in" style="animation-delay: 0.3s">
+                <h2 class="text-xl font-semibold text-indigo-600 mb-4 flex items-center">
+                    <i class="fas fa-code-compare mr-2"></i> Compare URLs
+                </h2>
+                <button id="compareBtn" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-md hover:bg-indigo-700 transition flex items-center justify-center mb-4">
+                    <i class="fas fa-exchange-alt mr-2"></i> Compare URLs
+                </button>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-gray-700 mb-2">Comparison Options</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="compareDomain" class="mr-2 h-4 w-4 text-indigo-600" checked>
+                            <span>Compare Domains</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="comparePath" class="mr-2 h-4 w-4 text-indigo-600" checked>
+                            <span>Compare Paths</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="compareParams" class="mr-2 h-4 w-4 text-indigo-600" checked>
+                            <span>Compare Query Parameters</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="comparisonResults" class="mt-4 hidden">
+                    <h3 class="font-medium text-gray-700 mb-2">Comparison Results</h3>
+                    <div id="paramsComparison" class="p-3 bg-gray-100 rounded-md url-component">
+                        <h4 class="font-medium">Query Parameters</h4>
+                        <div id="paramsComparisonResult" class="mt-1"></div>
+                    </div>
+                    <div id="domainComparison" class="mb-3 p-3 bg-gray-100 rounded-md url-component">
+                        <h4 class="font-medium">Domains</h4>
+                        <div id="domainComparisonResult" class="mt-1"></div>
+                    </div>
+                    <div id="pathComparison" class="mb-3 p-3 bg-gray-100 rounded-md url-component">
+                        <h4 class="font-medium">Paths</h4>
+                        <div id="pathComparisonResult" class="mt-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const url1Input = document.getElementById('url1');
+            const url2Input = document.getElementById('url2');
+            const analyze1Btn = document.getElementById('analyze1');
+            const analyze2Btn = document.getElementById('analyze2');
+            const compareBtn = document.getElementById('compareBtn');
+            
+            // Load saved URLs from localStorage if available
+            function loadSavedUrls() {
+                const savedUrl1 = localStorage.getItem('urlManipulator_url1');
+                const savedUrl2 = localStorage.getItem('urlManipulator_url2');
+                
+                if (savedUrl1) {
+                    url1Input.value = savedUrl1;
+                    analyzeUrl(
+                        url1Input,
+                        document.getElementById('url1Domain'),
+                        document.getElementById('url1DomainValue'),
+                        document.getElementById('url1Path'),
+                        document.getElementById('url1PathValue'),
+                        document.getElementById('url1Params'),
+                        document.getElementById('url1ParamsList')
+                    );
+                }
+                
+                if (savedUrl2) {
+                    url2Input.value = savedUrl2;
+                    analyzeUrl(
+                        url2Input,
+                        document.getElementById('url2Domain'),
+                        document.getElementById('url2DomainValue'),
+                        document.getElementById('url2Path'),
+                        document.getElementById('url2PathValue'),
+                        document.getElementById('url2Params'),
+                        document.getElementById('url2ParamsList')
+                    );
+                }
+                
+                // If both URLs are loaded, automatically compare them
+                if (savedUrl1 && savedUrl2) {
+                    compareUrls();
+                }
+            }
+            
+            // Save URLs to localStorage
+            function saveUrlsToLocalStorage() {
+                const url1 = url1Input.value.trim();
+                const url2 = url2Input.value.trim();
+                
+                if (url1) {
+                    localStorage.setItem('urlManipulator_url1', url1);
+                }
+                
+                if (url2) {
+                    localStorage.setItem('urlManipulator_url2', url2);
+                }
+            }
+            
+            // Analyze URL function
+            function analyzeUrl(urlInput, domainEl, domainValueEl, pathEl, pathValueEl, paramsEl, paramsListEl) {
+                const urlString = urlInput.value.trim();
+                if (!urlString) {
+                    urlInput.classList.add('shake');
+                    setTimeout(() => urlInput.classList.remove('shake'), 500);
+                    return;
+                }
+                
+                try {
+                    const url = new URL(urlString);
+                    
+                    // Display domain
+                    domainEl.classList.remove('hidden');
+                    domainValueEl.textContent = url.origin;
+                    
+                    // Display path
+                    pathEl.classList.remove('hidden');
+                    pathValueEl.textContent = url.pathname || '/';
+                    
+                    // Display query parameters
+                    const params = url.searchParams;
+                    if (params.toString()) {
+                        paramsEl.classList.remove('hidden');
+                        paramsListEl.innerHTML = '';
+                        
+                        params.forEach((value, key) => {
+                            const paramItem = document.createElement('div');
+                            paramItem.className = 'flex items-center p-3 bg-gray-100 rounded-md url-component fade-in';
+                            paramItem.innerHTML = `
+                                <div class="font-medium text-gray-700 mr-2 min-w-[80px]">${key}</div>
+                                <div class="flex-grow">
+                                    <input type="text" value="${value}" data-param="${key}" 
+                                        class="p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 param-value-input">
+                                </div>
+                                <button class="ml-2 text-red-500 hover:text-red-700 delete-param" data-param="${key}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            `;
+                            paramsListEl.appendChild(paramItem);
+                            
+                            // Add event listeners for parameter editing
+                            const input = paramItem.querySelector('.param-value-input');
+                            input.addEventListener('change', () => {
+                                updateUrlFromParams(urlInput, url, paramsListEl);
+                            });
+                            
+                            // Add event listeners for parameter deletion
+                            const deleteBtn = paramItem.querySelector('.delete-param');
+                            deleteBtn.addEventListener('click', () => {
+                                paramItem.classList.add('fade-out');
+                                setTimeout(() => {
+                                    paramItem.remove();
+                                    updateUrlFromParams(urlInput, url, paramsListEl);
+                                }, 300);
+                            });
+                        });
+                    } else {
+                        paramsEl.classList.add('hidden');
+                    }
+                } catch (error) {
+                    urlInput.classList.add('shake');
+                    setTimeout(() => urlInput.classList.remove('shake'), 500);
+                    alert('Invalid URL. Please enter a valid URL including the protocol (e.g., https://example.com)');
+                }
+            }
+            
+            // Update URL from edited parameters
+            function updateUrlFromParams(urlInput, originalUrl, paramsListEl) {
+                const url = new URL(originalUrl.href);
+                
+                // Clear all existing parameters
+                url.search = '';
+                
+                // Add parameters from the UI
+                const paramInputs = paramsListEl.querySelectorAll('.param-value-input');
+                paramInputs.forEach(input => {
+                    const key = input.dataset.param;
+                    const value = input.value;
+                    url.searchParams.set(key, value);
+                });
+                
+                // Update the URL input
+                urlInput.value = url.href;
+            }
+            
+            // Compare URLs function
+            function compareUrls() {
+                const url1String = url1Input.value.trim();
+                const url2String = url2Input.value.trim();
+                
+                if (!url1String || !url2String) {
+                    if (!url1String) url1Input.classList.add('shake');
+                    if (!url2String) url2Input.classList.add('shake');
+                    setTimeout(() => {
+                        url1Input.classList.remove('shake');
+                        url2Input.classList.remove('shake');
+                    }, 500);
+                    return;
+                }
+                
+                // Save URLs to localStorage when comparing
+                saveUrlsToLocalStorage();
+                
+                try {
+                    const url1 = new URL(url1String);
+                    const url2 = new URL(url2String);
+                    const comparisonResults = document.getElementById('comparisonResults');
+                    comparisonResults.classList.remove('hidden');
+                    
+                    // Compare domains
+                    if (document.getElementById('compareDomain').checked) {
+                        const domainComparisonResult = document.getElementById('domainComparisonResult');
+                        if (url1.origin === url2.origin) {
+                            domainComparisonResult.innerHTML = `<div class="text-green-600"><i class="fas fa-check-circle mr-1"></i> Domains match: ${url1.origin}</div>`;
+                        } else {
+                            domainComparisonResult.innerHTML = `
+                                <div class="text-red-600"><i class="fas fa-times-circle mr-1"></i> Domains differ:</div>
+                                <div class="ml-5 mt-1">URL 1: <span class="text-indigo-600">${url1.origin}</span></div>
+                                <div class="ml-5">URL 2: <span class="text-indigo-600">${url2.origin}</span></div>
+                            `;
+                        }
+                    }
+                    
+                    // Compare paths
+                    if (document.getElementById('comparePath').checked) {
+                        const pathComparisonResult = document.getElementById('pathComparisonResult');
+                        if (url1.pathname === url2.pathname) {
+                            pathComparisonResult.innerHTML = `<div class="text-green-600"><i class="fas fa-check-circle mr-1"></i> Paths match: ${url1.pathname || '/'}</div>`;
+                        } else {
+                            pathComparisonResult.innerHTML = `
+                                <div class="text-red-600"><i class="fas fa-times-circle mr-1"></i> Paths differ:</div>
+                                <div class="ml-5 mt-1">URL 1: <span class="text-indigo-600">${url1.pathname || '/'}</span></div>
+                                <div class="ml-5">URL 2: <span class="text-indigo-600">${url2.pathname || '/'}</span></div>
+                            `;
+                        }
+                    }
+                    
+                    // Compare query parameters
+                    if (document.getElementById('compareParams').checked) {
+                        const paramsComparisonResult = document.getElementById('paramsComparisonResult');
+                        paramsComparisonResult.innerHTML = '';
+                        
+                        const params1 = Array.from(url1.searchParams.entries());
+                        const params2 = Array.from(url2.searchParams.entries());
+                        
+                        if (params1.length === 0 && params2.length === 0) {
+                            paramsComparisonResult.innerHTML = `<div class="text-gray-600"><i class="fas fa-info-circle mr-1"></i> No query parameters in either URL</div>`;
+                        } else {
+                            // Create a map of all parameters
+                            const allParams = new Set();
+                            params1.forEach(([key]) => allParams.add(key));
+                            params2.forEach(([key]) => allParams.add(key));
+                            
+                            // Compare each parameter
+                            let commonCount = 0;
+                            let differentCount = 0;
+                            let uniqueToUrl1Count = 0;
+                            let uniqueToUrl2Count = 0;
+                            
+                            allParams.forEach(param => {
+                                const value1 = url1.searchParams.get(param);
+                                const value2 = url2.searchParams.get(param);
+                                
+                                if (value1 !== null && value2 !== null) {
+                                    if (value1 === value2) {
+                                        commonCount++;
+                                    } else {
+                                        differentCount++;
+                                    }
+                                } else if (value1 !== null) {
+                                    uniqueToUrl1Count++;
+                                } else {
+                                    uniqueToUrl2Count++;
+                                }
+                            });
+                            
+                            // Summary
+                            const summaryDiv = document.createElement('div');
+                            summaryDiv.className = 'mb-3';
+                            summaryDiv.innerHTML = `
+                                <div class="font-medium mb-1">Summary:</div>
+                                <div class="ml-3 text-sm">
+                                    <div class="${commonCount > 0 ? 'text-green-600' : 'text-gray-600'}"><i class="fas fa-check-circle mr-1"></i> ${commonCount} common parameters with same values</div>
+                                    <div class="${differentCount > 0 ? 'text-amber-600' : 'text-gray-600'}"><i class="fas fa-exclamation-circle mr-1"></i> ${differentCount} common parameters with different values</div>
+                                    <div class="${uniqueToUrl1Count > 0 ? 'text-blue-600' : 'text-gray-600'}"><i class="fas fa-circle-arrow-right mr-1"></i> ${uniqueToUrl1Count} parameters unique to URL 1</div>
+                                    <div class="${uniqueToUrl2Count > 0 ? 'text-purple-600' : 'text-gray-600'}"><i class="fas fa-circle-arrow-left mr-1"></i> ${uniqueToUrl2Count} parameters unique to URL 2</div>
+                                </div>
+                            `;
+                            paramsComparisonResult.appendChild(summaryDiv);
+                            
+                            // Detailed comparison
+                            const detailsDiv = document.createElement('div');
+                            detailsDiv.innerHTML = '<div class="font-medium mb-1">Details:</div>';
+                            paramsComparisonResult.appendChild(detailsDiv);
+                            
+                            allParams.forEach(param => {
+                                const value1 = url1.searchParams.get(param);
+                                const value2 = url2.searchParams.get(param);
+                                const paramDiv = document.createElement('div');
+                                paramDiv.className = 'ml-3 mb-2 p-2 bg-white rounded border border-gray-200';
+                                
+                                if (value1 !== null && value2 !== null) {
+                                    if (value1 === value2) {
+                                        paramDiv.innerHTML = `
+                                            <div class="font-medium text-green-600">${param} <i class="fas fa-check-circle ml-1"></i></div>
+                                            <div class="ml-2 text-sm">Value: ${value1}</div>
+                                        `;
+                                    } else {
+                                        paramDiv.innerHTML = `
+                                            <div class="font-medium text-amber-600">${param} <i class="fas fa-exclamation-circle ml-1"></i></div>
+                                            <div class="ml-2 text-sm">URL 1: ${value1}</div>
+                                            <div class="ml-2 text-sm">URL 2: ${value2}</div>
+                                        `;
+                                    }
+                                } else if (value1 !== null) {
+                                    paramDiv.innerHTML = `
+                                        <div class="font-medium text-blue-600">${param} <i class="fas fa-circle-arrow-right ml-1"></i></div>
+                                        <div class="ml-2 text-sm">Only in URL 1: ${value1}</div>
+                                    `;
+                                } else {
+                                    paramDiv.innerHTML = `
+                                        <div class="font-medium text-purple-600">${param} <i class="fas fa-circle-arrow-left ml-1"></i></div>
+                                        <div class="ml-2 text-sm">Only in URL 2: ${value2}</div>
+                                    `;
+                                }
+                                
+                                paramsComparisonResult.appendChild(paramDiv);
+                            });
+                        }
+                    }
+                } catch (error) {
+                    alert('Invalid URLs. Please enter valid URLs including the protocol (e.g., https://example.com)');
+                }
+            }
+            
+            // Load saved URLs when page loads
+            loadSavedUrls();
+            
+            // Event listeners
+            analyze1Btn.addEventListener('click', () => {
+                analyzeUrl(
+                    url1Input,
+                    document.getElementById('url1Domain'),
+                    document.getElementById('url1DomainValue'),
+                    document.getElementById('url1Path'),
+                    document.getElementById('url1PathValue'),
+                    document.getElementById('url1Params'),
+                    document.getElementById('url1ParamsList')
+                );
+            });
+            
+            analyze2Btn.addEventListener('click', () => {
+                analyzeUrl(
+                    url2Input,
+                    document.getElementById('url2Domain'),
+                    document.getElementById('url2DomainValue'),
+                    document.getElementById('url2Path'),
+                    document.getElementById('url2PathValue'),
+                    document.getElementById('url2Params'),
+                    document.getElementById('url2ParamsList')
+                );
+            });
+            
+            compareBtn.addEventListener('click', compareUrls);
+            
+            // Auto-analyze on input change (with debounce)
+            let timeout1 = null;
+            let timeout2 = null;
+            
+            url1Input.addEventListener('input', () => {
+                clearTimeout(timeout1);
+                timeout1 = setTimeout(() => {
+                    analyzeUrl(
+                        url1Input,
+                        document.getElementById('url1Domain'),
+                        document.getElementById('url1DomainValue'),
+                        document.getElementById('url1Path'),
+                        document.getElementById('url1PathValue'),
+                        document.getElementById('url1Params'),
+                        document.getElementById('url1ParamsList')
+                    );
+                }, 800);
+            });
+            
+            url2Input.addEventListener('input', () => {
+                clearTimeout(timeout2);
+                timeout2 = setTimeout(() => {
+                    analyzeUrl(
+                        url2Input,
+                        document.getElementById('url2Domain'),
+                        document.getElementById('url2DomainValue'),
+                        document.getElementById('url2Path'),
+                        document.getElementById('url2PathValue'),
+                        document.getElementById('url2Params'),
+                        document.getElementById('url2ParamsList')
+                    );
+                }, 800);
+            });
+        });
+    </script>
+</body>
+</html>
