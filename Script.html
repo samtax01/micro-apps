@@ -43,66 +43,104 @@
         .show-toast {
             opacity: 1;
         }
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow-y: auto;
+            transition: right 0.3s ease-in-out;
+            padding: 1.5rem;
+        }
+        .sidebar.open {
+            right: 0;
+        }
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .sidebar-toggle:hover {
+            transform: scale(1.05);
+        }
+        .sidebar-toggle i {
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+        .sidebar.open + .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+        .main-content {
+            transition: margin-right 0.3s ease-in-out;
+        }
+        .main-content.sidebar-open {
+            margin-right: 400px;
+        }
+        /* Tooltip styles */
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 300px;
+            word-break: break-all;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        .tooltip.tooltip-bottom::after {
+            top: auto;
+            bottom: 100%;
+            border-color: transparent transparent #333 transparent;
+        }
     </style>
 </head>
 <body class="bg-gray-100 p-6">
-    <div class="max-w-6xl mx-auto">
-        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-            <h1 class="text-4xl font-bold mb-4">Blog Article: Where to visit in New York</h1>
-            <div class="bg-white rounded-lg shadow-md p-6 max-w-4xl mx-auto mb-8">
-                <h2 class="text-3xl font-bold mb-4 text-gray-800">Exploring New York</h2>
-                <div class="mb-4 text-gray-500 flex items-center">
-                    <i class="fas fa-calendar-alt mr-2"></i> March 30, 2025
-                    <span class="mx-2">|</span>
-                    <i class="fas fa-user mr-2"></i> by Travel Enthusiast
-                </div>
-                <img style="height:300px" width="100%" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/28/5a/fe/49/hotel-belleclaire.jpg?w=1400&h=800&s=1" alt="New York Cityscape" class="w-full object-cover rounded-lg mb-6">
-
-                <div class="prose lg:prose-lg max-w-none">
-                    <section id="popular-hotels">
-                        <h2 class="text-2xl font-bold">Popular Hotels to Stay in New York</h2>
-                        <p>Discover the best hotels in New York for a comfortable and memorable stay. Browse through our top picks below.</p>
-                        
-                        <div class="hotel mt-6">
-                            <img width="100%" style="height:200px" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0e/87/17/5a/good-story-rooftop-bar.jpg?w=1800&h=1000&s=1" alt="The Plaza Hotel" class="w-full object-cover rounded-lg mb-4">
-                            <h3 class="text-2xl font-bold">The Plaza Hotel</h3>
-                            <p>A luxurious hotel offering world-class amenities and a prime location.</p>
-                            <div class="mt-2">
-                                <a href="https://booking.com" class="text-blue-500 hover:text-blue-700">Book on Booking.com</a> |
-                                <a href="https://expedia.com" class="text-blue-500 hover:text-blue-700">Book on Expedia</a>
-                            </div>
-                        </div>
-                        
-                        <div class="hotel mt-6">
-                            <img width="100%" style="height:200px" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/60/c1/76/the-tusk-bar.jpg?w=1400&h=800&s=1" alt="Park Hyatt New York" class="w-full object-cover rounded-lg mb-4">
-                            <h3 class="text-2xl font-bold">Park Hyatt New York</h3>
-                            <p>A modern and stylish hotel in the heart of Manhattan.</p>
-                            <div class="mt-2">
-                                <a href="https://booking.com" class="text-blue-500 hover:text-blue-700">Book on Booking.com</a> |
-                                <a href="https://expedia.com" class="text-blue-500 hover:text-blue-700">Book on Expedia</a>
-                            </div>
-                            <div class="my-widget"><!-- My Widget Here--></div>
-                        </div>
-                        
-                        <div class="hotel mt-6">
-                            <img width="100%" style="height:200px" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/14/e8/40/fc/midtown-manhattan-times.jpg?w=1400&h=800&s=1" alt="The Ritz-Carlton New York" class="w-full object-cover rounded-lg mb-4">
-                            <h3 class="text-2xl font-bold">The Ritz-Carlton New York</h3>
-                            <p>Experience luxury and elegance with top-tier services.</p>
-                            <div class="mt-2">
-                                <a href="https://booking.com" class="text-blue-500 hover:text-blue-700">Book on Booking.com</a> |
-                                <a href="https://expedia.com" class="text-blue-500 hover:text-blue-700">Book on Expedia</a>
-                            </div>
-                            <div class="my-widget"><!-- My Widget Here--></div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-            <h2 class="text-2xl font-bold mb-6">Script Injector</h2>
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle" class="sidebar-toggle">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <h1 class="text-2xl font-bold mb-6">Script Tools</h1>
+        
+        <!-- Script Injector Section -->
+        <div class="mb-6">
+            <h2 class="text-xl font-bold mb-4">Script Injector</h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 gap-4 mb-4">
                 <div>
                     <label for="scriptName" class="block text-sm font-medium text-gray-700 mb-1">Script Name</label>
                     <input id="scriptName" type="text" placeholder="Enter a name for your script" 
@@ -118,7 +156,7 @@
             <div>
                 <label for="customCodeContainer" class="block text-sm font-medium text-gray-700 mb-1">Custom JavaScript</label>
                 <div id="customCodeContainer" class="relative border border-gray-300 rounded">
-                    <textarea id="customCode" style="height:700px" class="w-full code-editor language-javascript p-4" spellcheck="false">// Enter your custom JavaScript code here
+                    <textarea id="customCode" style="height:300px" class="w-full code-editor language-javascript p-4" spellcheck="false">// Enter your custom JavaScript code here
 console.log('Hello from custom code!');</textarea>
                 </div>
             </div>
@@ -133,9 +171,10 @@ console.log('Hello from custom code!');</textarea>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <!-- Script History Section -->
+        <div>
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold">Script History</h2>
+                <h2 class="text-xl font-bold">Script History</h2>
                 <button id="clearHistory" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition">
                     <i class="fas fa-trash mr-2"></i>Clear All
                 </button>
@@ -157,7 +196,77 @@ console.log('Hello from custom code!');</textarea>
         </div>
     </div>
     
+    <div id="mainContent" class="max-w-6xl mx-auto main-content">
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+            <h1 class="text-4xl font-bold mb-4">Where to visit in New York</h1>
+            <div class="bg-white rounded-lg shadow-md p-6 max-w-4xl mx-auto mb-8">
+                <h2 class="text-3xl font-bold mb-4 text-gray-800">Exploring New York</h2>
+                <div class="mb-4 text-gray-500 flex items-center">
+                    <i class="fas fa-calendar-alt mr-2"></i> March 30, 2025
+                    <span class="mx-2">|</span>
+                    <i class="fas fa-user mr-2"></i> by Samson Oyetola 
+                </div>
+                <img style="height:300px" width="100%" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/28/5a/fe/49/hotel-belleclaire.jpg?w=1400&h=800&s=1" alt="New York Cityscape" class="w-full object-cover rounded-lg mb-6">
+
+                <div class="prose lg:prose-lg max-w-none">
+                    <section id="popular-hotels">
+                        <h2 class="text-2xl font-bold">Popular Hotels to Stay in New York</h2>
+                        <p>Discover the best hotels in New York for a comfortable and memorable stay. Browse through our top picks below.</p>
+                        
+                        <div class="hotel mt-6">
+                            <img width="100%" style="height:200px" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0e/87/17/5a/good-story-rooftop-bar.jpg?w=1800&h=1000&s=1" alt="The Plaza Hotel" class="w-full object-cover rounded-lg mb-4">
+                            <h3 class="text-2xl font-bold">The Plaza Hotel</h3>
+                            <p>A luxurious hotel offering world-class amenities and a prime location.</p>
+                            <div class="mt-2">
+                                <a href="https://booking.com" class="text-blue-500 hover:text-blue-700">Book on Booking.com</a>
+                                <br>
+                                <a href="https://expedia.com" class="text-blue-500 hover:text-blue-700">Book on Expedia</a>
+                                <br>
+                                <a href="https://vrbo.com" class="text-blue-500 hover:text-blue-700">Book on Vrbo</a>
+                            </div>
+                        </div>
+                        
+                        <div class="hotel mt-6">
+                            <img width="100%" style="height:200px" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/60/c1/76/the-tusk-bar.jpg?w=1400&h=800&s=1" alt="Park Hyatt New York" class="w-full object-cover rounded-lg mb-4">
+                            <h3 class="text-2xl font-bold">Park Hyatt New York</h3>
+                            <p>A modern and stylish hotel in the heart of Manhattan.</p>
+                            <div class="mt-2">
+                                <a href="https://booking.com" class="text-blue-500 hover:text-blue-700">Book on Booking.com</a>
+                                <br>
+                                <a href="https://expedia.com" class="text-blue-500 hover:text-blue-700">Book on Expedia</a>
+                                <br>
+                                <a href="https://vrbo.com" class="text-blue-500 hover:text-blue-700">Book on Vrbo</a>
+                            </div>
+                            <div class="my-widget"><!-- My Widget Here--></div>
+                        </div>
+                        
+                        <div class="hotel mt-6">
+                            <img width="100%" style="height:200px" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/14/e8/40/fc/midtown-manhattan-times.jpg?w=1400&h=800&s=1" alt="The Ritz-Carlton New York" class="w-full object-cover rounded-lg mb-4">
+                            <h3 class="text-2xl font-bold">The Ritz-Carlton New York</h3>
+                            <p>Experience luxury and elegance with top-tier services.</p>
+                            <div class="mt-2">
+                                <a href="https://booking.com" class="text-blue-500 hover:text-blue-700">Book on Booking.com</a>
+                                <br>
+                                <a href="https://expedia.com" class="text-blue-500 hover:text-blue-700">Book on Expedia</a>
+                                <br>
+                                <a href="https://vrbo.com" class="text-blue-500 hover:text-blue-700">Book on Vrbo</a>
+                            </div>
+                            <div class="my-widget"><!-- My Widget Here--></div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <footer>
+                <div class="block text-center"><small><a href="https://github.com/samtax01/micro-apps">Micro apps</a></small></div>
+            </footer>
+        </div>
+    </div>
+    
     <div id="toast" class="toast bg-green-500 text-white shadow-lg">Script applied successfully!</div>
+    
+    <!-- Tooltip container -->
+    <div id="tooltip" class="tooltip"></div>
     
     <script>
         const scriptNameInput = document.getElementById('scriptName');
@@ -168,6 +277,62 @@ console.log('Hello from custom code!');</textarea>
         const historyList = document.getElementById('historyList');
         const clearHistoryBtn = document.getElementById('clearHistory');
         const toast = document.getElementById('toast');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mainContent = document.getElementById('mainContent');
+        const tooltip = document.getElementById('tooltip');
+        
+        // Sidebar toggle functionality
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('sidebar-open');
+        });
+        
+        // Function to create tooltips for anchor tags
+        function setupTooltips() {
+            const anchors = document.querySelectorAll('a');
+            
+            anchors.forEach(anchor => {
+                anchor.addEventListener('mouseenter', (e) => {
+                    const href = anchor.getAttribute('href');
+                    if (href) {
+                        tooltip.textContent = href;
+                        tooltip.style.opacity = '1';
+                        
+                        // Position the tooltip above the anchor
+                        const rect = anchor.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        
+                        // Calculate position
+                        tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
+                        
+                        // Check if there's enough space above the element
+                        if (rect.top > tooltip.offsetHeight + 10) {
+                            // Position above
+                            tooltip.style.top = (rect.top + scrollTop) - tooltip.offsetHeight - 10 + 'px';
+                        } else {
+                            // Position below
+                            tooltip.style.top = (rect.bottom + scrollTop) + 10 + 'px';
+                            // Flip the arrow to point upward
+                            tooltip.classList.add('tooltip-bottom');
+                        }
+                        
+                        // Ensure tooltip is within viewport horizontally
+                        const tooltipRect = tooltip.getBoundingClientRect();
+                        if (tooltipRect.left < 0) {
+                            tooltip.style.left = '5px';
+                        } else if (tooltipRect.right > window.innerWidth) {
+                            tooltip.style.left = (window.innerWidth - tooltipRect.width - 5) + 'px';
+                        }
+                    }
+                });
+                
+                anchor.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                    tooltip.classList.remove('tooltip-bottom');
+                });
+            });
+        }
         
         // Function to show toast notification
         function showToast(message, type = 'success') {
@@ -240,6 +405,17 @@ console.log('Hello from custom code!');</textarea>
             scriptNameInput.value = config.name || '';
             scriptUrlInput.value = config.url || '';
             customCodeElement.value = config.code || '';
+
+            // Execute the script immediately
+            if (config.url) {
+                document.appendChild(document.createElement('script')).src = config.url;
+            }
+
+            // Execute the custom code immediately
+            if (config.code) {
+                eval(config.code);
+            }
+            
             showToast('Script loaded successfully');
         }
 
@@ -352,7 +528,11 @@ console.log('Hello from custom code!');</textarea>
         document.addEventListener('DOMContentLoaded', () => {
             loadHistory();
             loadLastUsedScript();
+            setupTooltips();
         });
     </script>
+    
+    <!-- Href Monitor Script -->
+    <script src="assets/js/href-monitor.js"></script>
 </body>
 </html>
