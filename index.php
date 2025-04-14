@@ -1,7 +1,16 @@
 <?php
 session_start();
 $dir = __DIR__;
-$files = array_diff(scandir($dir), array('.', '..', 'index.php', '.DS_Store', '.git', 'README.md', 'assets'));
+$files = array_diff(scandir($dir), array(
+        '.',
+        '..',
+        'index.php',
+        '.DS_Store',
+        '.git',
+        '.github',
+        'README.md',
+        'assets')
+);
 $viewMode = $_SESSION['viewMode'] ?? 'grid';
 
 if (isset($_POST['viewMode'])) {
